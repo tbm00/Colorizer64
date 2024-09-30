@@ -16,7 +16,7 @@ Created by tbm00 for play.mc64.wtf.
 
 ## Default Config
 ```
-# Colorizer64 v0.0.1-beta by @tbm00
+# Colorizer64 v0.0.2-beta by @tbm00
 
 enabled: true
 ```

@@ -50,6 +50,7 @@ public class ColorCommand implements TabExecutor {
     // remove color code String from player
     private boolean handleUnsetCommand(Player player) {
         entryManager.deleteEntry(player.getName());
+        player.sendMessage(prefix + "Your chat color has been removed!");
         return true;
     }
 
@@ -67,8 +68,8 @@ public class ColorCommand implements TabExecutor {
             if (isValidColor) {
                 // set color code String
                 entryManager.saveEntry(player.getName(), colorCode);
-                player.sendMessage(prefix + ChatColor.GREEN + "Your chat color has been set to " +
-                        ChatColor.translateAlternateColorCodes('&', colorCode) + colorCode);
+                player.sendMessage(prefix + "Your chat color has been set to " +
+                        ChatColor.translateAlternateColorCodes('&', colorCode) + colorCode + ChatColor.GRAY + "!");
                 return true;
             } else {
                 player.sendMessage(prefix + ChatColor.RED + "Invalid color code!");
@@ -91,7 +92,7 @@ public class ColorCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1 && sender.hasPermission("colorizer64.set")) {
             List<String> suggestions = new ArrayList<>(Arrays.asList(
-                    "unset", "&0", "&1", "&2", "&3", "&4", "&5", "&6",
+                    "unset", "&1", "&2", "&3", "&4", "&5", "&6",
                     "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f"
                 ));
             List<String> completions = new ArrayList<>();
