@@ -1,7 +1,9 @@
 package dev.tbm00.spigot.colorizer64;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,11 +47,19 @@ public class EntryManager {
     }
 
     private void saveEntriesAsync() {
-        Bukkit.getScheduler().runTaskAsynchronously(javaPlugin, () -> db.saveEntries(entries));
+        Map<String, String> snapshot;
+        synchronized (entries) {
+            snapshot = new HashMap<>(entries);
+        }
+        Bukkit.getScheduler().runTaskAsynchronously(javaPlugin, () -> db.saveEntries(snapshot));
     }
 
     // on plugin disable
     public void close() {
-        db.saveEntries(entries);
+        Map<String, String> snapshot;
+        synchronized (entries) {
+            snapshot = new HashMap<>(entries);
+        }
+        db.saveEntries(snapshot);
     }
 }

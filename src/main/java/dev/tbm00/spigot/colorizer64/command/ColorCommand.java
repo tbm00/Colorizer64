@@ -83,7 +83,7 @@ public class ColorCommand implements TabExecutor {
 
     boolean checkColorCode(String colorCode) {
         Set<String> allowedColors = new HashSet<>(Arrays.asList(
-                "&1", "&2", "&3", "&4", "&5", "&6", "&7",
+                "&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7",
                 "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f" 
             ));
         return allowedColors.contains(colorCode.toLowerCase());
@@ -92,7 +92,7 @@ public class ColorCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1 && sender.hasPermission("colorizer64.set")) {
             List<String> suggestions = new ArrayList<>(Arrays.asList(
-                    "unset", "&1", "&2", "&3", "&4", "&5", "&6",
+                    "unset", "&0", "&1", "&2", "&3", "&4", "&5", "&6",
                     "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f"
                 ));
             List<String> completions = new ArrayList<>();

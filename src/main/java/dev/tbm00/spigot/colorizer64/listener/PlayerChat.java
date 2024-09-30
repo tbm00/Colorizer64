@@ -19,13 +19,12 @@ public class PlayerChat implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {      
         // if player has permission colorizer64.set && entryManager.entryExists("username")==true
             // confirm colorCode is still valid
-                // append colorCode String to the start of their message
+                // prepend colorCode String to the start of their message
 
         Player player = event.getPlayer();
         if (player.hasPermission("colorizer64.set") && entryManager.entryExists(player.getName())) {
             String colorCode = entryManager.getColor(player.getName());
             if (colorCode != null) {
-                // Prepend the color code to the player's message
                 String coloredMessage = ChatColor.translateAlternateColorCodes('&', colorCode) + event.getMessage();
                 event.setMessage(coloredMessage);
             }
