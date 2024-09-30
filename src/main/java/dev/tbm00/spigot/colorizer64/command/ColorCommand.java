@@ -1,14 +1,18 @@
 package dev.tbm00.spigot.colorizer64.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import dev.tbm00.spigot.colorizer64.EntryManager;
 
@@ -22,77 +26,79 @@ public class ColorCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(prefix + ChatColor.RED + "This command can only be used by players.");
+            return false;
+        } Player player = (Player) sender;
+        
         if (args.length == 0) {
             sender.sendMessage(prefix + ChatColor.GRAY + "Usage: /chatcolor <colorCode>/unset");
-            return true;
+            return false;
         }
 
         String subCommand = args[0].toLowerCase();
 
         if (subCommand.equals("unset")) {
-            Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("Colorizer64"), () -> handleUnsetCommand(sender, args));
+            handleUnsetCommand(player);
         } else {
-            Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("Colorizer64"), () -> handleSetCommand(sender, args));
+            handleSetCommand(player, args);
         }
 
         return true;
     }
 
-    private boolean handleUnsetCommand(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("colorizer64.set")) {
-            sender.sendMessage(prefix + ChatColor.RED + "No permission!");
-            return false;
-        }
-
-        if (args.length == 1) {
-            // remove color code String with entryManager.deleteEntry
-            return true;
-        } else {
-            sender.sendMessage(prefix + ChatColor.GRAY + "Usage: /chatcolor <colorCode>/unset");
-            return false;
-        }
+    // remove color code String from player
+    private boolean handleUnsetCommand(Player player) {
+        entryManager.deleteEntry(player.getName());
+        return true;
     }
 
-    private boolean handleSetCommand(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("colorizer64.set")) {
-            sender.sendMessage(prefix + ChatColor.RED + "No permission!");
+    // set color code String for player
+    private boolean handleSetCommand(Player player, String[] args) {
+        if (!player.hasPermission("colorizer64.set")) {
+            player.sendMessage(prefix + ChatColor.RED + "No permission!");
             return false;
         }
 
         if (args.length == 1) {
-            String colorCode = args[1];
+            String colorCode = args[0];
             boolean isValidColor = checkColorCode(colorCode);
 
             if (isValidColor) {
-                // set color code String with entryManager.saveEntry
+                // set color code String
+                entryManager.saveEntry(player.getName(), colorCode);
+                player.sendMessage(prefix + ChatColor.GREEN + "Your chat color has been set to " +
+                        ChatColor.translateAlternateColorCodes('&', colorCode) + colorCode);
                 return true;
             } else {
-                sender.sendMessage(prefix + ChatColor.RED + "Invalid color code!");
+                player.sendMessage(prefix + ChatColor.RED + "Invalid color code!");
                 return false;
             }
         } else {
-            sender.sendMessage(prefix + ChatColor.GRAY + "Usage: /chatcolor <colorCode>/unset");
+            player.sendMessage(prefix + ChatColor.GRAY + "Usage: /chatcolor <colorCode>/unset");
             return false;
         }
     }
 
     boolean checkColorCode(String colorCode) {
-        // `if color code is /in (&a, &f) || (&1, &9)`
-            //return true
-        //else 
-            return false;
+        Set<String> allowedColors = new HashSet<>(Arrays.asList(
+                "&1", "&2", "&3", "&4", "&5", "&6", "&7",
+                "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f" 
+            ));
+        return allowedColors.contains(colorCode.toLowerCase());
     }
 
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> list = new ArrayList<>();
-        if (args.length == 1) {
-            if (sender.hasPermission("colorizer64.set")) {
-                String n = "<colorCode>/unset";
-                if (n.startsWith(args[0])) {
-                    list.add(n);
-                }
-            }
+        if (args.length == 1 && sender.hasPermission("colorizer64.set")) {
+            List<String> suggestions = new ArrayList<>(Arrays.asList(
+                    "unset", "&0", "&1", "&2", "&3", "&4", "&5", "&6",
+                    "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f"
+                ));
+            List<String> completions = new ArrayList<>();
+            StringUtil.copyPartialMatches(args[0], suggestions, completions);
+            Collections.sort(completions);
+            return completions;
         }
-        return list; 
+        return Collections.emptyList();
     }
 }

@@ -12,8 +12,6 @@ public class Colorizer64 extends JavaPlugin {
     private JSONHandler jsonHandler;
     private EntryManager entryManager;
 
-    
-
     @Override
     public void onEnable() {
         // Startup Message
@@ -35,7 +33,7 @@ public class Colorizer64 extends JavaPlugin {
 
         // Connect to JSON
         try {
-            // Load JSON jsonHandler = new JSONHandler(this);
+            jsonHandler = new JSONHandler(this);
         } catch (Exception e) {
             getLogger().severe("Failed to connect to JSON. Disabling plugin.");
             getServer().getPluginManager().disablePlugin(this);
@@ -45,7 +43,7 @@ public class Colorizer64 extends JavaPlugin {
         entryManager = new EntryManager(this, jsonHandler);
 
         // Register Listener
-        getServer().getPluginManager().registerEvents(new PlayerChat(this, entryManager), this);
+        getServer().getPluginManager().registerEvents(new PlayerChat(entryManager), this);
 
         // Register Commands
         getCommand("chatcolor").setExecutor(new ColorCommand(entryManager));
@@ -53,7 +51,7 @@ public class Colorizer64 extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        jsonHandler.closeConnection();
+        entryManager.close();
     }
 
     public JSONHandler getDatabase() {

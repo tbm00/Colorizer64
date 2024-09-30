@@ -1,31 +1,34 @@
 package dev.tbm00.spigot.colorizer64.listener;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.tbm00.spigot.colorizer64.EntryManager;
 
 public class PlayerChat implements Listener {
-    private JavaPlugin javaPlugin;
     private final EntryManager entryManager;
 
-    public PlayerChat(JavaPlugin javaPlugin, EntryManager entryManager) {
-        this.javaPlugin = javaPlugin;
+    public PlayerChat(EntryManager entryManager) {
         this.entryManager = entryManager;
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        // check if enabled
-        
-        // if ( (player has permission colorizer64.set) && (entryManager.entryExists("username")==true) )
-            // if chatmessage.startsWith(/) return
-            // else
-                // append color String to the start of their message
-                // return
+    public void onPlayerChat(AsyncPlayerChatEvent event) {      
+        // if player has permission colorizer64.set && entryManager.entryExists("username")==true
+            // confirm colorCode is still valid
+                // append colorCode String to the start of their message
 
-        return;
+        Player player = event.getPlayer();
+        if (player.hasPermission("colorizer64.set") && entryManager.entryExists(player.getName())) {
+            String colorCode = entryManager.getColor(player.getName());
+            if (colorCode != null) {
+                // Prepend the color code to the player's message
+                String coloredMessage = ChatColor.translateAlternateColorCodes('&', colorCode) + event.getMessage();
+                event.setMessage(coloredMessage);
+            }
+        }
     }
 }
