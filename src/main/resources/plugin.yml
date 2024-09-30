@@ -1,0 +1,13 @@
+name: Colorizer64
+version: ${project.version}
+description: This plugin enables players to set their chat color
+author: tbm00
+main: dev.tbm00.spigot.colorizer64.Colorizer64
+api-version: 1.17
+commands:
+  chatcolor:
+    description: Colorizer64 set command
+permissions:
+  colorizer64.set:
+    description: Ability to set chat color with the command
+    default: op
