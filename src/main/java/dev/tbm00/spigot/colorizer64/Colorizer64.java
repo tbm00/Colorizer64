@@ -9,9 +9,10 @@ import dev.tbm00.spigot.colorizer64.data.JSONHandler;
 import dev.tbm00.spigot.colorizer64.listener.PlayerChat;
 
 public class Colorizer64 extends JavaPlugin {
-
     private JSONHandler jsonHandler;
     private EntryManager entryManager;
+
+    
 
     @Override
     public void onEnable() {
@@ -25,6 +26,12 @@ public class Colorizer64 extends JavaPlugin {
 
         // Load Config
         saveDefaultConfig();
+        boolean enabled = getConfig().getBoolean("enabled", true);
+        if (!enabled) {
+            getLogger().severe("Disabled in config...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Connect to JSON
         try {
@@ -34,8 +41,6 @@ public class Colorizer64 extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
-
         // Connect LogManager
         entryManager = new EntryManager(this, jsonHandler);
 
